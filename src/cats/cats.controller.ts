@@ -8,20 +8,21 @@ import {
   Delete,
   UseFilters,
   ForbiddenException,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
 import { HttpExceptionFilter } from 'src/http-exception.filter';
+import { ParseIntPipe } from './parse-int.pipe';
 
 @Controller('cats')
-@UseFilters(new HttpExceptionFilter())
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
   @Post()
-  @UseFilters(new HttpExceptionFilter())
-  async create(@Body() createCatDto: CreateCatDto) {
+  async create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
     return this.catsService.create(createCatDto);
   }
 
@@ -32,7 +33,7 @@ export class CatsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', new ParseIntPipe()) id: string) {
     return this.catsService.findOne(+id);
   }
 
