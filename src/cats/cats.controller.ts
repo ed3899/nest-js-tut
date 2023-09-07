@@ -6,18 +6,21 @@ import {
   Patch,
   Param,
   Delete,
-  UseFilters,
   ForbiddenException,
-  UsePipes,
   ValidationPipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
-import { HttpExceptionFilter } from 'src/http-exception.filter';
 import { ParseIntPipe } from './parse-int.pipe';
+import { Reflector } from '@nestjs/core';
+import { LoggingInterceptor } from './logging.interceptor';
+
+export const Roles = Reflector.createDecorator<string[]>();
 
 @Controller('cats')
+@UseInterceptors(LoggingInterceptor)
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
