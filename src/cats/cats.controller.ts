@@ -9,18 +9,21 @@ import {
   ForbiddenException,
   ValidationPipe,
   UseInterceptors,
+  Scope,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
 import { ParseIntPipe } from './parse-int.pipe';
 import { Reflector } from '@nestjs/core';
-import { LoggingInterceptor } from './logging.interceptor';
+import { TimeoutInterceptor } from './timeout.interceptor';
 
 export const Roles = Reflector.createDecorator<string[]>();
 
-@Controller('cats')
-@UseInterceptors(LoggingInterceptor)
+@Controller({
+  path: 'cats',
+  scope: Scope.REQUEST,
+})
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
@@ -30,9 +33,11 @@ export class CatsController {
   }
 
   @Get()
+  @UseInterceptors(TimeoutInterceptor)
   async findAll() {
     throw new ForbiddenException();
     // return this.catsService.findAll();
+    // return [];
   }
 
   @Get(':id')

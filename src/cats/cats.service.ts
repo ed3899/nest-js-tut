@@ -1,11 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { ArgumentsHost, Inject, Injectable, Scope } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
 import { Cat } from './entities/cat.entity';
+import { LazyModuleLoader, REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class CatsService {
   private readonly cats: InstanceType<typeof Cat>[] = [];
+
+  onModuleInit() {
+    console.log(`The module has been initialized.`);
+  }
+
+  onApplicationShutdown(signal: string) {
+    console.log(signal); // e.g. "SIGINT"
+  }
 
   create(createCatDto: CreateCatDto) {
     this.cats.push(createCatDto);
@@ -13,7 +22,7 @@ export class CatsService {
   }
 
   findAll() {
-    return `This action returns all cats`;
+    return [`This action returns all cats`];
   }
 
   findOne(id: number) {
