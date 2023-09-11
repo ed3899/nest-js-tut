@@ -28,6 +28,7 @@ export class CatsService {
   }
 
   findOne(id: number) {
+
     const r = this.configService.get("database.port")
     console.log(r)
     return `This action returns a #${id} cat`;
