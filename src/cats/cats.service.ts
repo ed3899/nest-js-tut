@@ -2,11 +2,13 @@ import { ArgumentsHost, Inject, Injectable, Scope } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
 import { Cat } from './entities/cat.entity';
-import { LazyModuleLoader, REQUEST } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CatsService {
   private readonly cats: InstanceType<typeof Cat>[] = [];
+
+  constructor(private configService: ConfigService) {}
 
   onModuleInit() {
     console.log(`The module has been initialized.`);
@@ -26,6 +28,8 @@ export class CatsService {
   }
 
   findOne(id: number) {
+    const r = this.configService.get("database.port")
+    console.log(r)
     return `This action returns a #${id} cat`;
   }
 
