@@ -10,6 +10,7 @@ import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
 import { Cat } from './entities/cat.entity';
 import { ConfigService } from '@nestjs/config';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class CatsService {
@@ -19,6 +20,7 @@ export class CatsService {
   constructor(
     private configService: ConfigService,
     private schedulerRegistry: SchedulerRegistry,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   onModuleInit() {
@@ -41,7 +43,13 @@ export class CatsService {
   findOne(id: number) {
     const r = this.configService.get('database.port');
     console.log(r);
+    this.eventEmitter.emit('order.created');
     return `This action returns a #${id} cat`;
+  }
+
+  @OnEvent('order.created')
+  handleOrderCreatedEvent() {
+    console.log("boom!!x")
   }
 
   update(id: number, updateCatDto: UpdateCatDto) {
@@ -60,6 +68,6 @@ export class CatsService {
 
     const job = this.schedulerRegistry.getCronJob('notifications');
 
-    console.log(job.lastDate())
+    console.log(job.lastDate());
   }
 }
