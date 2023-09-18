@@ -6,11 +6,13 @@ import { CatsController } from './cats/cats.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { CatsModule } from './cats/cats.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: "postgres",
+      type: 'postgres',
       host: 'localhost',
       port: 5432,
       username: 'postgres',
@@ -20,6 +22,8 @@ import { UsersModule } from './users/users.module';
       synchronize: true,
     }),
     UsersModule,
+    CatsModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

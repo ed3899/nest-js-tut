@@ -1,4 +1,11 @@
-import { ArgumentsHost, Inject, Injectable, Scope } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Inject,
+  Injectable,
+  Scope,
+  Logger,
+} from '@nestjs/common';
+import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
 import { Cat } from './entities/cat.entity';
@@ -7,8 +14,12 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class CatsService {
   private readonly cats: InstanceType<typeof Cat>[] = [];
+  private readonly logger = new Logger(CatsService.name);
 
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private schedulerRegistry: SchedulerRegistry,
+  ) {}
 
   onModuleInit() {
     console.log(`The module has been initialized.`);
@@ -28,9 +39,8 @@ export class CatsService {
   }
 
   findOne(id: number) {
-
-    const r = this.configService.get("database.port")
-    console.log(r)
+    const r = this.configService.get('database.port');
+    console.log(r);
     return `This action returns a #${id} cat`;
   }
 
@@ -40,5 +50,16 @@ export class CatsService {
 
   remove(id: number) {
     return `This action removes a #${id} cat`;
+  }
+
+  @Cron(CronExpression.EVERY_30_SECONDS, {
+    name: 'notifications',
+  })
+  handleCron() {
+    this.logger.debug('Called every 30 seconds');
+
+    const job = this.schedulerRegistry.getCronJob('notifications');
+
+    console.log(job.lastDate())
   }
 }

@@ -16,13 +16,12 @@ import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
 import { ParseIntPipe } from './parse-int.pipe';
 import { Reflector } from '@nestjs/core';
-import { TimeoutInterceptor } from './timeout.interceptor';
 
 export const Roles = Reflector.createDecorator<string[]>();
 
 @Controller({
   path: 'cats',
-  scope: Scope.REQUEST,
+  version: '1',
 })
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
@@ -33,11 +32,9 @@ export class CatsController {
   }
 
   @Get()
-  @UseInterceptors(TimeoutInterceptor)
   async findAll() {
-    throw new ForbiddenException();
     // return this.catsService.findAll();
-    // return [];
+    return [];
   }
 
   @Get(':id')
